@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<!DOCTYPE html>
 <html lang="tr">
 <head>
   <meta charset="UTF-8" />
@@ -21,6 +20,7 @@
       min-height: 100vh;
       color: #333;
       overflow-x: hidden;
+      position: relative;
     }
     .main-wrapper {
       width: 100%;
@@ -30,6 +30,7 @@
       flex-direction: column;
       align-items: center;
       position: relative;
+      z-index: 1;
     }
     .bg-donkey {
       position: absolute;
@@ -47,14 +48,12 @@
       text-align: center;
       color: #6c3483;
       margin-bottom: 1rem;
-      z-index: 1;
     }
     .message {
       font-size: 1.05rem;
       text-align: center;
       color: #2874a6;
       margin-bottom: 2rem;
-      z-index: 1;
       line-height: 1.5;
     }
     .footer {
@@ -63,8 +62,37 @@
       padding: 1rem 0;
       font-size: 0.95rem;
       color: #666;
-      z-index: 1;
     }
+
+    /* Baloncuklar */
+    .bubbles {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      z-index: 0;
+      pointer-events: none;
+    }
+    .bubble {
+      position: absolute;
+      bottom: -100px;
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      animation: rise 10s infinite ease-in;
+    }
+    @keyframes rise {
+      0% {
+        transform: translateY(0) scale(1);
+        opacity: 0.8;
+      }
+      100% {
+        transform: translateY(-120vh) scale(1.2);
+        opacity: 0;
+      }
+    }
+
     @media (max-width: 400px) {
       h1 {
         font-size: 1.4rem;
@@ -84,5 +112,30 @@
     </div>
     <div class="footer">Bu site senin için kodlandı</div>
   </div>
+
+  <!-- Baloncuklar -->
+  <div class="bubbles" id="bubbles"></div>
+
+  <script>
+    const bubbleContainer = document.getElementById("bubbles");
+
+    function createBubble() {
+      const bubble = document.createElement("div");
+      bubble.classList.add("bubble");
+      const size = Math.random() * 30 + 10;
+      bubble.style.width = `${size}px`;
+      bubble.style.height = `${size}px`;
+      bubble.style.left = `${Math.random() * 100}%`;
+      bubble.style.backgroundColor = `hsla(${Math.random() * 360}, 70%, 80%, 0.3)`;
+      bubble.style.animationDuration = `${6 + Math.random() * 4}s`;
+      bubbleContainer.appendChild(bubble);
+
+      setTimeout(() => {
+        bubble.remove();
+      }, 10000);
+    }
+
+    setInterval(createBubble, 400);
+  </script>
 </body>
 </html>
