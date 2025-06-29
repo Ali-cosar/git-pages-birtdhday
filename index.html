@@ -143,16 +143,16 @@
       box-shadow: 0 0 18px 4px #ffe066, 0 0 32px 8px #ffb347;
     }
     .smoke {
-      width: 22px;
-      height: 32px;
+      width: 32px;
+      height: 48px;
       position: absolute;
       left: 50%;
-      top: -18px;
+      top: -24px;
       transform: translateX(-50%);
       pointer-events: none;
       opacity: 0.85;
       z-index: 2;
-      animation: smoke-rise 2.3s cubic-bezier(.4,.01,.6,1) forwards;
+      animation: smoke-rise 4.5s cubic-bezier(.4,.01,.6,1) forwards;
       background: none;
     }
     .smoke-shape {
@@ -173,9 +173,35 @@
     }
     @keyframes smoke-rise {
       0% { opacity: 0.85; transform: translateX(-50%) translateY(0) scale(1); }
-      40% { opacity: 0.7; transform: translateX(-50%) translateY(-18px) scale(1.12); }
-      80% { opacity: 0.5; transform: translateX(-50%) translateY(-38px) scale(1.22); }
-      100% { opacity: 0; transform: translateX(-50%) translateY(-60px) scale(1.32); }
+      30% { opacity: 0.8; transform: translateX(-50%) translateY(-45px) scale(1.15); }
+      60% { opacity: 0.6; transform: translateX(-50%) translateY(-95px) scale(1.25); }
+      85% { opacity: 0.4; transform: translateX(-50%) translateY(-150px) scale(1.35); }
+      100% { opacity: 0; transform: translateX(-50%) translateY(-220px) scale(1.45); }
+    }
+
+    /* Mutlu Seneler mesajı için stil */
+    .happy-new-year {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 2.5rem;
+      color: #e74c3c;
+      background: linear-gradient(45deg, #f39c12, #e74c3c, #9b59b6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-weight: bold;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+      z-index: 30000;
+      opacity: 0;
+      animation: happy-message-fade 2s ease-in-out forwards;
+      pointer-events: none;
+    }
+    @keyframes happy-message-fade {
+      0% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+      50% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+      100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
     }
   </style>
 </head>
@@ -261,6 +287,48 @@
       }
     }
 
+    // Çok fazla konfeti fonksiyonu
+    function showLotsOfConfetti() {
+      const confettiColors = [
+        '#f7ca18', '#6c3483', '#2874a6', '#e74c3c', '#27ae60', '#f8e8ee', '#d6eaf8', '#ff6b6b', '#4ecdc4', '#45b7d1'
+      ];
+      for (let i = 0; i < 500; i++) {
+        const confetti = document.createElement('div');
+        confetti.style.position = 'fixed';
+        confetti.style.top = '-20px';
+        confetti.style.left = `${Math.random() * 100}%`;
+        confetti.style.width = `${Math.random() * 10 + 4}px`;
+        confetti.style.height = `${Math.random() * 20 + 6}px`;
+        confetti.style.backgroundColor = confettiColors[Math.floor(Math.random() * confettiColors.length)];
+        confetti.style.opacity = 0.9;
+        confetti.style.borderRadius = `${Math.random() > 0.5 ? '50%' : '2px'}`;
+        confetti.style.zIndex = 9999;
+        confetti.style.pointerEvents = 'none';
+        confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+        confetti.style.transition = 'top 3s cubic-bezier(.23,1.02,.64,1), left 3s linear, opacity 3s';
+        document.body.appendChild(confetti);
+        setTimeout(() => {
+          confetti.style.top = `${80 + Math.random() * 20}vh`;
+          confetti.style.left = `${Math.random() * 100}%`;
+          confetti.style.opacity = 0;
+        }, 10);
+        setTimeout(() => {
+          confetti.remove();
+        }, 3100);
+      }
+    }
+
+    // Mutlu Seneler mesajını göster
+    function showHappyNewYear() {
+      const message = document.createElement('div');
+      message.className = 'happy-new-year';
+      message.textContent = 'NİCE MUTLU SENELER';
+      document.body.appendChild(message);
+      setTimeout(() => {
+        message.remove();
+      }, 3000);
+    }
+
     // Modal açma ve kapama fonksiyonları
     function showCakeModal() {
       document.getElementById('cake-modal').style.display = 'flex';
@@ -301,13 +369,18 @@
           // Alevi gizle
           flame.style.display = 'none';
           // Dumanı animasyon bitince kaldır
-          setTimeout(() => { smoke.remove(); }, 1100);
+          setTimeout(() => { smoke.remove(); }, 4500);
         }
       }
       // Mesajı gizle
       const tip = document.getElementById('cake-tip');
       if (tip) tip.style.display = 'none';
       window.cakeFlamesExtinguished = true;
+      // Mutlu Seneler mesajını ve çok konfeti göster
+      setTimeout(() => {
+        showHappyNewYear();
+        showLotsOfConfetti();
+      }, 800);
       e.stopPropagation();
     }
     for (let i = 1; i <= 3; i++) {
