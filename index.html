@@ -101,6 +101,82 @@
         font-size: 0.95rem;
       }
     }
+
+    /* Mum ve alev için stil */
+    .cake-wrapper {
+      position: relative;
+      display: inline-block;
+    }
+    .candle {
+      position: absolute;
+      left: 50%;
+      top: 18%;
+      transform: translateX(-50%);
+      width: 12px;
+      height: 32px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      z-index: 1;
+    }
+    .candle-body {
+      width: 8px;
+      height: 22px;
+      background: #fffbe7;
+      border-radius: 3px;
+      border: 1px solid #e1c699;
+      margin-top: 10px;
+      box-shadow: 0 0 2px #e1c699;
+    }
+    .flame {
+      width: 16px;
+      height: 22px;
+      background: radial-gradient(ellipse at center, #fffbe7 40%, #ffe066 60%, #ffb347 90%, #ff9800 100%, transparent 100%);
+      border-radius: 50% 50% 60% 60%;
+      position: absolute;
+      top: -16px;
+      left: 50%;
+      transform: translateX(-50%) scaleY(1.2);
+      opacity: 0.98;
+      animation: flame-flicker 0.45s infinite alternate;
+      cursor: pointer;
+      box-shadow: 0 0 18px 4px #ffe066, 0 0 32px 8px #ffb347;
+    }
+    .smoke {
+      width: 22px;
+      height: 32px;
+      position: absolute;
+      left: 50%;
+      top: -18px;
+      transform: translateX(-50%);
+      pointer-events: none;
+      opacity: 0.85;
+      z-index: 2;
+      animation: smoke-rise 2.3s cubic-bezier(.4,.01,.6,1) forwards;
+      background: none;
+    }
+    .smoke-shape {
+      display: block;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(ellipse at center, #bbb 60%, #eee 100%, transparent 100%);
+      border-radius: 50% 60% 70% 60%;
+      opacity: 0.85;
+    }
+    @keyframes flame-flicker {
+      0% { transform: translateX(-50%) scaleY(1.2) scaleX(1.05); opacity: 0.97; }
+      20% { transform: translateX(-50%) scaleY(1.32) scaleX(0.93); opacity: 1; }
+      40% { transform: translateX(-50%) scaleY(1.18) scaleX(1.13); opacity: 0.98; }
+      60% { transform: translateX(-50%) scaleY(1.25) scaleX(0.95); opacity: 1; }
+      80% { transform: translateX(-50%) scaleY(1.15) scaleX(1.12); opacity: 0.99; }
+      100% { transform: translateX(-50%) scaleY(1.28) scaleX(0.91); opacity: 0.96; }
+    }
+    @keyframes smoke-rise {
+      0% { opacity: 0.85; transform: translateX(-50%) translateY(0) scale(1); }
+      40% { opacity: 0.7; transform: translateX(-50%) translateY(-18px) scale(1.12); }
+      80% { opacity: 0.5; transform: translateX(-50%) translateY(-38px) scale(1.22); }
+      100% { opacity: 0; transform: translateX(-50%) translateY(-60px) scale(1.32); }
+    }
   </style>
 </head>
 <body>
@@ -110,11 +186,28 @@
     <div class="message">
       Yeni yaşında sağlık, mutluluk ve başarı seninle olsun. Nice güzel yıllara birlikte gülmek dileğiyle!
     </div>
+    <button id="surprise-btn" style="padding: 0.7em 1.5em; font-size: 1.1rem; background: #6c3483; color: #fff; border: none; border-radius: 1.5em; cursor: pointer; margin-bottom: 1.2em; box-shadow: 0 2px 8px rgba(0,0,0,0.07); transition: background 0.2s;">🎁 Sürprizi gör</button>
     <div class="footer">Bu site senin için kodlandı</div>
   </div>
 
   <!-- Baloncuklar -->
   <div class="bubbles" id="bubbles"></div>
+
+  <!-- Doğum günü pastası için modal pencere -->
+  <div id="cake-modal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.35); z-index:20000; align-items:center; justify-content:center;">
+    <div id="cake-modal-content" style="background:#fff; border-radius:1.5em; box-shadow:0 8px 48px rgba(0,0,0,0.18); padding:3.5em 2.5em 2.2em 2.5em; display:flex; flex-direction:column; align-items:center; position:relative; min-width:340px; min-height:340px; max-width:90vw; max-height:90vh; justify-content:center;">
+      <span class="cake-wrapper" style="font-size:4.5rem;">
+        🎂
+        <span class="flame" id="cake-flame-1" style="position:absolute; left:41%; top:13%;"></span>
+        <span class="flame" id="cake-flame-2" style="position:absolute; left:50%; top:10%;"></span>
+        <span class="flame" id="cake-flame-3" style="position:absolute; left:59%; top:13%;"></span>
+        <span style="display:block; width:100%; height:0;"></span>
+        <div id="cake-tip" style="position:absolute; left:50%; top:-56px; transform:translateX(-50%); font-size:1.08rem; color:#e67e22; text-align:center; background:rgba(255,255,255,0.92); padding:0.3em 1em; border-radius:1em; box-shadow:0 2px 8px rgba(0,0,0,0.07); white-space:nowrap; z-index:2;">Mumları söndür ama ilk önce <b>DİLEK TUT!!!</b></div>
+      </span>
+      <div style="font-size:1.3rem; color:#6c3483; margin:1em 0 1.2em 0; text-align:center;">İyi ki doğdun!</div>
+      <button id="close-cake-modal" style="padding:0.5em 1.2em; font-size:1rem; background:#6c3483; color:#fff; border:none; border-radius:1em; cursor:pointer;">Kapat</button>
+    </div>
+  </div>
 
   <script>
     const bubbleContainer = document.getElementById("bubbles");
@@ -136,6 +229,93 @@
     }
 
     setInterval(createBubble, 400);
+
+    // Konfeti fonksiyonu
+    function showConfetti() {
+      const confettiColors = [
+        '#f7ca18', '#6c3483', '#2874a6', '#e74c3c', '#27ae60', '#f8e8ee', '#d6eaf8'
+      ];
+      for (let i = 0; i < 80; i++) {
+        const confetti = document.createElement('div');
+        confetti.style.position = 'fixed';
+        confetti.style.top = '-20px';
+        confetti.style.left = `${Math.random() * 100}%`;
+        confetti.style.width = `${Math.random() * 8 + 6}px`;
+        confetti.style.height = `${Math.random() * 16 + 8}px`;
+        confetti.style.backgroundColor = confettiColors[Math.floor(Math.random() * confettiColors.length)];
+        confetti.style.opacity = 0.85;
+        confetti.style.borderRadius = `${Math.random() > 0.5 ? '50%' : '2px'}`;
+        confetti.style.zIndex = 9999;
+        confetti.style.pointerEvents = 'none';
+        confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+        confetti.style.transition = 'top 2.2s cubic-bezier(.23,1.02,.64,1), left 2.2s linear, opacity 2.2s';
+        document.body.appendChild(confetti);
+        setTimeout(() => {
+          confetti.style.top = `${80 + Math.random() * 20}vh`;
+          confetti.style.left = `${Math.random() * 100}%`;
+          confetti.style.opacity = 0;
+        }, 10);
+        setTimeout(() => {
+          confetti.remove();
+        }, 2300);
+      }
+    }
+
+    // Modal açma ve kapama fonksiyonları
+    function showCakeModal() {
+      document.getElementById('cake-modal').style.display = 'flex';
+      showConfetti();
+      // Tüm alevleri tekrar göster
+      for (let i = 1; i <= 3; i++) {
+        const flame = document.getElementById('cake-flame-' + i);
+        if (flame) flame.style.display = 'block';
+      }
+      // Mesajı tekrar göster
+      const tip = document.getElementById('cake-tip');
+      if (tip) tip.style.display = 'block';
+      // Sönme kontrolünü sıfırla
+      window.cakeFlamesExtinguished = false;
+    }
+    function closeCakeModal() {
+      document.getElementById('cake-modal').style.display = 'none';
+    }
+    document.getElementById('surprise-btn').addEventListener('click', showCakeModal);
+    document.getElementById('close-cake-modal').addEventListener('click', closeCakeModal);
+    // Modal dışında tıklayınca kapansın
+    document.getElementById('cake-modal').addEventListener('click', function(e) {
+      if (e.target === this) closeCakeModal();
+    });
+    // Alevlerden birine tıklanınca hepsi sönsün
+    function extinguishAllFlames(e) {
+      if (window.cakeFlamesExtinguished) return;
+      for (let i = 1; i <= 3; i++) {
+        const flame = document.getElementById('cake-flame-' + i);
+        if (flame && flame.style.display !== 'none') {
+          // Duman efekti oluştur
+          const smoke = document.createElement('span');
+          smoke.className = 'smoke';
+          smoke.style.left = flame.style.left;
+          smoke.style.top = flame.style.top;
+          smoke.innerHTML = '<span class="smoke-shape"></span>';
+          flame.parentNode.appendChild(smoke);
+          // Alevi gizle
+          flame.style.display = 'none';
+          // Dumanı animasyon bitince kaldır
+          setTimeout(() => { smoke.remove(); }, 1100);
+        }
+      }
+      // Mesajı gizle
+      const tip = document.getElementById('cake-tip');
+      if (tip) tip.style.display = 'none';
+      window.cakeFlamesExtinguished = true;
+      e.stopPropagation();
+    }
+    for (let i = 1; i <= 3; i++) {
+      document.getElementById('cake-flame-' + i).onclick = extinguishAllFlames;
+    }
+
+    // Pasta emojisine tıklayınca da alevler sönsün
+    document.getElementById('cake-emoji').onclick = extinguishAllFlames;
   </script>
 </body>
 </html>
